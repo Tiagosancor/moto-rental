@@ -26,11 +26,12 @@ class Plano :
 
 
 class Locação:
-    Id
-    data_inicio,
-    data_fim,
-    data_devolucao,
-    data_previsao_fim,
-    valor_adicional,
-    percentual_multa,
-    valor_total
+    def __init__(self, identificador, data_inicio, data_fim, data_devolucao, data_previsao_fim, valor_adicional, percentual_multa, valor_total):
+        self.identificador = identificador 
+        self.data_inicio = data_inicio
+        self.data_fim = data_fim
+        self.data_devolucao = data_devolucao
+        self.data_previsao_fim = data_previsao_fim
+        self.valor_adicional = valor_adicional
+        self.percentual_multa = percentual_multa
+        self.valor_total = valor_total
