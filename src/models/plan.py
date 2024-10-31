@@ -1,7 +1,7 @@
 class Plan:
-    def __init__(self, identifier, plan_type, daily_rate, days_quantity):
+    def __init__(self, identifier, decription, daily_rate, days_quantity):
         self.identifier = identifier
-        self.plan_type = plan_type
+        self.decription = decription 
         self.daily_rate = daily_rate
         self.days_quantity = days_quantity
 
