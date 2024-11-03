@@ -1,3 +1,5 @@
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from src.models.motorcycle import Motorcycle, MotorcycleRegistration
@@ -23,3 +25,7 @@ async def add_motorcycle(identifier_code: int, licence_plate: str, model: str, y
 async def get_motorcycles():
     motorcycles = motorcycle_registry.get_motocycles()      
     return JSONResponse (content=[motorcycle.__dict__ for motorcycle in motorcycles], status_code=200)
+
+if __name__ == "__main__":
+    uvicorn.run(app,port=8000)
+
