@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from src.models.motorcycle import Motorcycle, MotorcycleRegistration
 
@@ -22,4 +22,4 @@ async def add_motorcycle(identifier_code: int, licence_plate: str, model: str, y
 @app.get("/api/v1/motorcycles")
 async def get_motorcycles():
     motorcycles = motorcycle_registry.get_motocycles()      
-    return JSONResponse (content=[motorcycles.__dict__ for motocycle in motorcycles], status_code=200)
+    return JSONResponse (content=[motorcycle.__dict__ for motorcycle in motorcycles], status_code=200)
