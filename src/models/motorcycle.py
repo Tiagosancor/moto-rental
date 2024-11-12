@@ -1,4 +1,17 @@
-class Motorcycle:
+from sqlalchemy import Column, Integer, String
+from src.api.database import Base
+
+
+class Motorcycle(Base):
+    __tablename__ = "motorcycles"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    identifier_code = Column(Integer, unique=True, index=True)
+    license_plate = Column(String(10), unique=True, index=True)
+    model = Column(String(50))
+    year = Column(Integer)
+
+
     def __init__(self, identifier_code, license_plate, model, year):
         self.identifier_code = identifier_code
         self.license_plate = license_plate  # Identificador único
