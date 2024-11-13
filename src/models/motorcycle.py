@@ -5,15 +5,13 @@ from src.api.database import Base
 class Motorcycle(Base):
     __tablename__ = "motorcycles"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    identifier_code = Column(Integer, unique=True, index=True)
-    license_plate = Column(String(10), unique=True, index=True)
-    model = Column(String(50))
-    year = Column(Integer)
+    identifier_code = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
+    license_plate = Column(String(10), nullable=False)
+    model = Column(String(50), nullable=False)
+    year = Column(Integer, nullable=False)
 
 
-    def __init__(self, identifier_code, license_plate, model, year):
-        self.identifier_code = identifier_code
+    def __init__(self, license_plate: str = "", model: str = "", year: int = 0):
         self.license_plate = license_plate  # Identificador único
         self.model = model
         self.year = year
