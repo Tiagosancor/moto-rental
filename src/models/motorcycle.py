@@ -6,7 +6,7 @@ class Motorcycle(Base):
     __tablename__ = "motorcycles"
 
     identifier_code = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
-    license_plate = Column(String(10), nullable=False)
+    license_plate = Column(String(10), unique=True, nullable=False)
     model = Column(String(50), nullable=False)
     year = Column(Integer, nullable=False)
 
