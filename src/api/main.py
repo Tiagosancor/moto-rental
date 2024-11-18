@@ -43,9 +43,22 @@ async def get_motorcycles(db: AsyncSession = Depends(get_db)):
 
 @app.post("/api/v1/rentals")
 async def add_rental(start_date: date, end_date: date, return_date: date, expected_end_date: date, 
-                     additional_fee: float, penalty_percentage: float, total_amount: float, db: AsyncSession = Depends(get_db)):
+                     additional_fee: float, penalty_percentage: float, total_amount: float, deliveryperson_id: int, plan_id: int, motorcycle_id: int, db: AsyncSession = Depends(get_db)):
+    
+    motorcycle = await db.get(Motorcycle, motorcycle_id)
+    if not motorcycle:
+        return JSONResponse(
+            content={"error": f"Motorcycle with ID {motorcycle_id} not found"},
+            status_code= 404,
+            )
+    
     new_rental = Rental(start_date=start_date, end_date=end_date, return_date=return_date, expected_end_date=expected_end_date,
-                         additional_fee=additional_fee, penalty_percentage=penalty_percentage, total_amount=total_amount)
+                         additional_fee=additional_fee, penalty_percentage=penalty_percentage, total_amount=total_amount, deliveryperson_id=deliveryperson_id, plan_id=plan_id)
+
+    motorcycle.rental_id = new_rental.identifier
+    db.add(motorcycle)
+    await db.commit()
+
     db.add(new_rental)
     await db.commit()
     await db.refresh(new_rental)

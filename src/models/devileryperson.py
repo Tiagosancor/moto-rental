@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, CHAR, Date
 from datetime import date 
 from src.api.database import Base
+from sqlalchemy.orm import relationship
 
 class DeliveryPerson(Base):
     __tablename__ = "deliverypersons"
@@ -13,6 +14,7 @@ class DeliveryPerson(Base):
     license_category = Column(CHAR(2), nullable=False)
     license_image = Column(String(50), nullable=False)
 
+    rentals = relationship("Rental", back_populates="deliveryperson")
 
     def __init__(self, name: str = "", birth_date: date = date.today(), tax_id: str = "", license_number: str = "", license_category: str = "", license_image: str = ""):
         self.name = name

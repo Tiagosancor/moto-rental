@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from src.api.database import Base
+from sqlalchemy.orm import relationship
 
 
 class Motorcycle(Base):
@@ -9,12 +10,16 @@ class Motorcycle(Base):
     license_plate = Column(String(10), unique=True, nullable=False)
     model = Column(String(50), nullable=False)
     year = Column(Integer, nullable=False)
+    rental_id = Column(Integer, ForeignKey("rentals.identifier"), nullable=True)
+
+    rental = relationship("Rental", back_populates="motorcycles")
 
 
     def __init__(self, license_plate: str = "", model: str = "", year: int = 0):
         self.license_plate = license_plate  # Identificador único
         self.model = model
         self.year = year
+       
 
     def __repr__(self):
         return f"Motorcycle({self.identifier_code}, {self.license_plate}, {self.model}, {self.year})"
