@@ -12,7 +12,7 @@ class DeliveryPerson(Base):
     tax_id = Column(String(14), unique=True, nullable=False)
     license_number = Column(String(11), unique=True, nullable=False)
     license_category = Column(CHAR(2), nullable=False)
-    license_image = Column(String(50), nullable=False)
+    license_image = Column(String(255), nullable=False)
 
     rentals = relationship("Rental", back_populates="deliveryperson")
 

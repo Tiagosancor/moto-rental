@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -10,10 +10,15 @@ from src.models.devileryperson import DeliveryPerson
 from src.models.plan import Plan
 from fastapi.responses import RedirectResponse
 from datetime import date
+import os
+from pathlib import Path
+
 
 app = FastAPI()
 
 
+UPLOAD_DIRECTORY = Path("C:\license_image") # type: ignore
+UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 @app.on_event("startup")
 async def startup_event():
@@ -83,6 +88,50 @@ async def get_deliverypersons(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(DeliveryPerson))
     deliverypersons = result.scalars().all()
     return [deliveryperson.__dict__ for deliveryperson in deliverypersons]
+
+@app.post("/api/v1/deliveryperson/{deliveryperson_id}/upload_license")
+async def upload_license(
+    deliveryperson_id: int,
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    ):
+        if file.content_type not in ["image/png", "image/bmp"]:
+            raise HTTPException(
+                status_code=400, 
+                detail="Invalide file type. Only PNG and BMP are allowed.",
+                )
+        deliveryperson = await db.get(DeliveryPerson, deliveryperson_id)
+        if not deliveryperson:
+            raise HTTPException(
+                status_code=400,
+                detail=f"DeliveryPerson with ID {deliveryperson_id} not found.",
+                )
+
+        if not file.filename or "." not in file.filename:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid file name. The file must have a valid extension (png or bmp)")
+        
+        file_extension = file.filename.split(".")[-1].lower()
+        if file_extension not in ["png", "bmp"]:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid file extension. Only PNG and BMP are allowed.",
+                )
+        
+        file_path = UPLOAD_DIRECTORY / f"license_{deliveryperson_id}.{file_extension}"
+
+        with open(file_path, "wb") as buffer:
+            buffer.write(await file.read())
+
+        deliveryperson.license_image = str(file_path)
+        db.add(deliveryperson)
+        await db.commit()
+
+        return {
+            "message": "License image uploaded successfully",
+        "file_path": str(file_path),
+        }
 
 @app.post("/api/v1/plans")
 async def add_plan(description: str, daily_rate: float, days_quantity: int, db: AsyncSession = Depends(get_db)):
